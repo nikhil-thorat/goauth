@@ -8,12 +8,13 @@ import (
 )
 
 const (
-	CreateUserQuery         = "INSERT INTO users (firstName, lastName, email, password) VALUES ($1,$2,$3,$4)"
-	GetUserByEmailQuery     = "SELECT * FROM users WHERE email = $1"
-	GetUserByIDQuery        = "SELECT * FROM users WHERE id = $1"
-	UpdateUserDetailsQuery  = "UPDATE users set firstName = $1, lastName = $2 WHERE id = $3"
-	UpdateUserPasswordQuery = "UPDATE users set password = $1 WHERE id = $2"
-	DeleteUserQuery         = "DELETE FROM users WHERE id = $1"
+	CreateUserQuery                   = "INSERT INTO users (firstName, lastName, email, password, isVerified, verificationCode) VALUES ($1,$2,$3,$4,$5,$6)"
+	GetUserByEmailQuery               = "SELECT * FROM users WHERE email = $1"
+	GetUserByIDQuery                  = "SELECT * FROM users WHERE id = $1"
+	UpdateUserDetailsQuery            = "UPDATE users set firstName = $1, lastName = $2 WHERE id = $3"
+	UpdateUserPasswordQuery           = "UPDATE users set password = $1 WHERE id = $2"
+	UpdateUserVerificationStatusQuery = "UPDATE users set isVerified = $1 WHERE id = $2"
+	DeleteUserQuery                   = "DELETE FROM users WHERE id = $1"
 )
 
 type Store struct {
@@ -25,7 +26,7 @@ func NewStore(db *sql.DB) *Store {
 }
 
 func (s *Store) CreateUser(user types.User) error {
-	_, err := s.db.Exec(CreateUserQuery, user.FirstName, user.LastName, user.Email, user.Password)
+	_, err := s.db.Exec(CreateUserQuery, user.FirstName, user.LastName, user.Email, user.Password, user.IsVerified, user.VerificationCode)
 	if err != nil {
 		return err
 	}
@@ -89,6 +90,16 @@ func (s *Store) UpdateUserPassword(userID int, password string) error {
 	return nil
 }
 
+func (s *Store) UpdateUserVerificationStatus(userID int, isVerified bool) error {
+
+	_, err := s.db.Exec(UpdateUserVerificationStatusQuery, isVerified, userID)
+
+	if err != nil {
+		return nil
+	}
+	return nil
+}
+
 func (s *Store) DeleteUser(userID int) error {
 	res, err := s.db.Exec(DeleteUserQuery, userID)
 	if err != nil {
@@ -114,6 +125,8 @@ func scanRowIntoUser(row *sql.Row, user *types.User) error {
 		&user.LastName,
 		&user.Email,
 		&user.Password,
+		&user.IsVerified,
+		&user.VerificationCode,
 		&user.CreatedAt,
 	)
 }

@@ -52,6 +52,12 @@ func WithJWTAuth(handlerFunc http.HandlerFunc, store types.UserStore) http.Handl
 			return
 		}
 
+		if !user.IsVerified {
+			err := fmt.Errorf("USER EMAIL NOT VERIFIED")
+			permissionDenied(w, err)
+			return
+		}
+
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, UserKey, user.ID)
 		r = r.WithContext(ctx)

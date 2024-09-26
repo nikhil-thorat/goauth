@@ -5,12 +5,14 @@ import (
 )
 
 type User struct {
-	ID        int       `json:"id"`
-	FirstName string    `json:"firstName"`
-	LastName  string    `json:"lastName"`
-	Email     string    `json:"email"`
-	Password  string    `json:"password"`
-	CreatedAt time.Time `json:"createdAt"`
+	ID               int    `json:"id"`
+	FirstName        string `json:"firstName"`
+	LastName         string `json:"lastName"`
+	Email            string `json:"email"`
+	Password         string `json:"password"`
+	IsVerified       bool
+	VerificationCode string
+	CreatedAt        time.Time `json:"createdAt"`
 }
 
 type UserStore interface {
@@ -19,6 +21,7 @@ type UserStore interface {
 	GetUserByID(userID int) (*User, error)
 	UpdateUserDetails(userId int, firstName string, lastName string) error
 	UpdateUserPassword(userID int, password string) error
+	UpdateUserVerificationStatus(userID int, isVerified bool) error
 	DeleteUser(userID int) error
 }
 
@@ -31,6 +34,11 @@ type RegisterUserPayload struct {
 type LoginUserPayload struct {
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required"`
+}
+
+type VerifyUserPayload struct {
+	Email            string `json:"email" validate:"required,email"`
+	VerificationCode string `json:"verificationCode" validate:"required"`
 }
 
 type UpdateUserDetailsPayload struct {

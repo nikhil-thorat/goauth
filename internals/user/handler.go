@@ -48,11 +48,15 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	verificationCode := utils.GenerateVerificationCode()
+
 	err = h.store.CreateUser(types.User{
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-		Email:     user.Email,
-		Password:  hashedPassword,
+		FirstName:        user.FirstName,
+		LastName:         user.LastName,
+		Email:            user.Email,
+		Password:         hashedPassword,
+		IsVerified:       false,
+		VerificationCode: verificationCode,
 	})
 
 	if err != nil {
@@ -60,7 +64,13 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusCreated, nil)
+	err = utils.SendVerificationEmail(user.Email, verificationCode)
+	if err != nil {
+		utils.WriteErrorJSON(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusCreated, "EMAIL VERIFICATION CODE SENT TO YOUR EMAIL")
 }
 
 func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
@@ -85,6 +95,11 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !u.IsVerified {
+		utils.WriteErrorJSON(w, http.StatusBadRequest, fmt.Errorf("USER EMAIL NOT VERIFIED"))
+		return
+	}
+
 	if !auth.ComparePassword(u.Password, []byte(user.Password)) {
 		utils.WriteErrorJSON(w, http.StatusBadRequest, fmt.Errorf("INVALID CREDENTIALS : %v", err))
 		return
@@ -98,6 +113,43 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.WriteJSON(w, http.StatusOK, map[string]string{"token": token})
+
+}
+
+func (h *Handler) Verify(w http.ResponseWriter, r *http.Request) {
+	var verifyUserPayload types.VerifyUserPayload
+
+	err := utils.ParseJSON(r, &verifyUserPayload)
+	if err != nil {
+		utils.WriteErrorJSON(w, http.StatusBadRequest, err)
+		return
+	}
+
+	err = utils.Validate.Struct(verifyUserPayload)
+	if err != nil {
+		errors := err.(validator.ValidationErrors)
+		utils.WriteErrorJSON(w, http.StatusBadRequest, fmt.Errorf("INVALID PAYLOAD : %v", errors))
+		return
+	}
+
+	user, err := h.store.GetUserByEmail(verifyUserPayload.Email)
+	if err != nil {
+		utils.WriteErrorJSON(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if user.VerificationCode != verifyUserPayload.VerificationCode {
+		utils.WriteErrorJSON(w, http.StatusBadRequest, fmt.Errorf("INVALID VERIFICATION CODE"))
+		return
+	}
+
+	err = h.store.UpdateUserVerificationStatus(user.ID, true)
+	if err != nil {
+		utils.WriteErrorJSON(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, nil)
 
 }
 

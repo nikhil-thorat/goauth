@@ -10,6 +10,7 @@ func (h *Handler) RegisterRoutes(router *http.ServeMux) {
 
 	router.HandleFunc("POST /user/register", h.Register)
 	router.HandleFunc("POST /user/login", h.Login)
+	router.HandleFunc("POST /user/verify", h.Verify)
 
 	router.HandleFunc("GET /user/profile", auth.WithJWTAuth(h.Profile, h.store))
 	router.HandleFunc("PUT /user/update", auth.WithJWTAuth(h.Update, h.store))
