@@ -1,0 +1,17 @@
+package components
+
+import lagouts "github.com/nikhil-thorat/goauth/templates/layouts"
+
+templ Header() {
+	@lagouts.Base() {
+		<header>
+			<nav>
+				<h1>GoAuth</h1>
+				<ul>
+					<li><a href="/login">Login</a></li>
+					<li><a href="/register">Register</a></li>
+				</ul>
+			</nav>
+		</header>
+	}
+}

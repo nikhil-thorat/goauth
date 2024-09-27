@@ -1,0 +1,15 @@
+package pages 
+
+import lagouts "github.com/nikhil-thorat/goauth/templates/layouts"
+
+templ EmailVerification() {
+	@lagouts.Base() {
+		<div>
+			<span>Verification code sent to nikhilthoratofficial@gmail.com</span>
+			<form>
+				<input type="text" name="verificationCode" placeholder="Verification Code"/>
+				<button type="submit">Verify</button>
+			</form>
+		</div>
+	}
+}
