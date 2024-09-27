@@ -1,0 +1,23 @@
+package lagouts 
+
+import "github.com/nikhil-thorat/goauth/templates/components"
+
+templ Base() {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>GoAuth</title>
+			<link href="/static/css/styles.css" rel="stylesheet"/>
+			<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+			<script src="/static/js/app.js" defer></script>
+		</head>
+		<body>
+			@components.Header()
+			<main>Hello World</main>
+			@components.Footer()
+		</body>
+	</html>
+}

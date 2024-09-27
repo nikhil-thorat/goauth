@@ -9,6 +9,8 @@ require (
 	github.com/lib/pq v1.10.9
 )
 
+require github.com/a-h/templ v0.2.778 // indirect
+
 require (
 	github.com/stretchr/testify v1.9.0 // indirect
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect

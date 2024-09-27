@@ -1,0 +1,16 @@
+package pages
+
+import layouts "github.com/nikhil-thorat/goauth/templates/layouts"
+
+templ UpdateProfile() {
+	@layouts.Base() {
+		<div>
+			<h1>Update Profile</h1>
+			<form>
+				<input type="text" name="firstName" placeholder="First Name"/>
+				<input type="text" name="lastName" placeholder="Last Name"/>
+				<button type="submit">Update</button>
+			</form>
+		</div>
+	}
+}
