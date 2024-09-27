@@ -8,8 +8,11 @@ package pages
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+<<<<<<< HEAD
 import layouts "github.com/nikhil-thorat/goauth/templates/layouts"
 
+=======
+>>>>>>> ec79e209d7e190f6f0b382db52bc934d72a7ecb4
 func UpdateProfile() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -49,7 +52,11 @@ func UpdateProfile() templ.Component {
 			}
 			return templ_7745c5c3_Err
 		})
+<<<<<<< HEAD
 		templ_7745c5c3_Err = layouts.Base().Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+=======
+		templ_7745c5c3_Err = lagouts.Base().Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+>>>>>>> ec79e209d7e190f6f0b382db52bc934d72a7ecb4
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
